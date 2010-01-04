@@ -1,13 +1,26 @@
 require 'test_helper'
 
 class ProjectTest < ActiveSupport::TestCase
-  def test_case_name
-project = Project.create! :owner_attributes => { :name => 'Bello' }
+  self.use_transactional_fixtures = false 
 
-# without attr_accessible
-p project.owner # => #<Author id: 980190963, name: "Bello", project_id: 980190963, owner: true, admin: true>
+  def test_project_rolls_back_when_task_validation_fails
+    @project = Project.create :name => 'Foo', :tasks_attributes => { '0' => { :name => 'Bar', :fail => :in_validation } }
 
-# with: attr_accessible :name
-p project.owner # => #<Author id: 980190963, name: "Bello", project_id: 980190963, owner: nil, admin: nil>
+    assert @project.tasks.first.new_record?
+    assert @project.new_record?
+  end
+
+  def test_project_rolls_back_when_task_before_save_fails
+    @project = Project.create :name => 'Foo', :tasks_attributes => { '0' => { :name => 'Bar', :fail => :before_save } }
+
+    assert @project.tasks.first.new_record?
+    assert @project.new_record?
+  end
+
+  def test_project_rolls_back_when_task_after_save_fails
+    @project = Project.create :name => 'Foo', :tasks_attributes => { '0' => { :name => 'Bar', :fail => :after_save } }
+
+    assert @project.tasks.first.new_record?
+    assert @project.new_record?
   end
 end
