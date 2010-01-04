@@ -1,0 +1,4 @@
+db/*.sqlite
+log
+tmp
+vendor/rails

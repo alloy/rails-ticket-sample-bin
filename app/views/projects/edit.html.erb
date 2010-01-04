@@ -1,0 +1,22 @@
+<h1>Editing project</h1>
+
+<% form_for(@project) do |f| %>
+  <%= f.error_messages %>
+
+  <%= f.text_field :name %>
+
+  <% f.fields_for :tasks, :build_if_blank => 3 do |tf| %>
+    <%= tf.text_field :name %>
+  <% end %>
+  
+  <% f.fields_for :author, :build_if_blank => true do |tf| %>
+    <%= tf.text_field :name %>
+  <% end %>
+
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @project %> |
+<%= link_to 'Back', projects_path %>
